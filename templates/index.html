@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PDF → CSV</title>
+    <style>
+      body {
+        font-family: Segoe UI, Roboto, Arial, sans-serif;
+        margin: 40px;
+      }
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin-bottom: 0.2em;
+      }
+      .card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      input[type="file"] {
+        display: block;
+        margin: 12px 0;
+      }
+      button {
+        background: #0078d4;
+        color: #fff;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      #status {
+        margin-top: 12px;
+      }
+      .note {
+        color: #555;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>PDF → CSV</h1>
+      <p class="note">
+        Upload one or more PDF files. Tables from each PDF will be automatically
+        merged into a single CSV file. Download individual results per file.
+      </p>
+
+      <div class="card">
+        <form id="uploadForm">
+          <label for="pdfs">Select PDF files</label>
+          <div
+            id="dropzone"
+            style="
+              border: 2px dashed #ddd;
+              padding: 12px;
+              border-radius: 6px;
+              text-align: center;
+            "
+          >
+            <input
+              id="pdfs"
+              name="pdfs"
+              type="file"
+              accept="application/pdf"
+              multiple
+              style="display: none"
+            />
+            <div id="dropText">
+              Drag & drop PDF files here, or
+              <a href="#" id="chooseLink">choose files</a>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 12px;
+              display: flex;
+              gap: 12px;
+              align-items: center;
+            "
+          >
+            <label for="parser">Parser</label>
+            <select id="parser" name="parser">
+              <option value="pdfplumber">pdfplumber (default)</option>
+              <option value="tabula">tabula (requires Java & tabula-py)</option>
+            </select>
+          </div>
+
+          <div id="fileList" style="margin-top: 12px"></div>
+
+          <div style="margin-top: 12px; display: flex; gap: 12px">
+            <button id="convertBtn" type="button" disabled>
+              Convert uploaded files
+            </button>
+            <button
+              id="downloadAllBtn"
+              type="button"
+              disabled
+              style="background: #107c10"
+            >
+              Download All
+            </button>
+          </div>
+        </form>
+        <div id="status"></div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const input = document.getElementById("pdfs");
+      const status = document.getElementById("status");
+      const convertBtn = document.getElementById("convertBtn");
+      const downloadAllBtn = document.getElementById("downloadAllBtn");
+      const dropzone = document.getElementById("dropzone");
+      const chooseLink = document.getElementById("chooseLink");
+      const fileList = document.getElementById("fileList");
+      const parserSelect = document.getElementById("parser");
+
+      // uploaded entries: array of {file, id, status, row, progressEl, statusEl, downloadBtn}
+      const uploaded = [];
+      let conversionCompleted = false;
+
+      function createFileRow(file, idx) {
+        const li = document.createElement("div");
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
+        li.style.alignItems = "center";
+        li.style.padding = "6px 0";
+
+        const left = document.createElement("div");
+        left.textContent =
+          file.name +
+          (file.size ? ` (${Math.round(file.size / 1024)} KB)` : "");
+
+        const center = document.createElement("div");
+        center.style.minWidth = "200px";
+        const prog = document.createElement("progress");
+        prog.max = 100;
+        prog.value = 0;
+        prog.style.width = "200px";
+        center.appendChild(prog);
+
+        const right = document.createElement("div");
+        right.style.display = "flex";
+        right.style.gap = "8px";
+
+        const uploadStatus = document.createElement("span");
+        uploadStatus.textContent = "waiting";
+
+        const downloadBtn = document.createElement("button");
+        downloadBtn.textContent = "Download";
+        downloadBtn.disabled = true;
+        downloadBtn.dataset.fileId = "";
+
+        right.appendChild(uploadStatus);
+        right.appendChild(downloadBtn);
+
+        li.appendChild(left);
+        li.appendChild(center);
+        li.appendChild(right);
+
+        fileList.appendChild(li);
+
+        uploaded[idx] = {
+          file,
+          id: null,
+          status: "waiting",
+          row: li,
+          progressEl: prog,
+          statusEl: uploadStatus,
+          downloadBtn,
+        };
+        // wire download action
+        downloadBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const fid = downloadBtn.dataset.fileId;
+          if (!fid) return;
+
+          // Fetch the file and trigger download without page reload
+          try {
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = "Downloading...";
+
+            const response = await fetch(`/download/${fid}`);
+            if (!response.ok) throw new Error("Download failed");
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            // Get filename from Content-Disposition header or use default
+            const contentDisposition = response.headers.get(
+              "Content-Disposition"
+            );
+            let filename = "download.zip";
+            if (contentDisposition) {
+              const match = contentDisposition.match(
+                /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+              );
+              if (match && match[1]) {
+                filename = match[1].replace(/['"]/g, "");
+              }
+            }
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            downloadBtn.textContent = "Download";
+            downloadBtn.disabled = false;
+          } catch (err) {
+            downloadBtn.textContent = "Download Failed";
+            console.error("Download error:", err);
+            setTimeout(() => {
+              downloadBtn.textContent = "Download";
+              downloadBtn.disabled = false;
+            }, 2000);
+          }
+        });
+      }
+
+      chooseLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent bubbling to dropzone
+        input.click();
+      });
+      dropzone.addEventListener("click", (e) => {
+        // Only trigger if clicking the dropzone itself, not child elements
+        if (
+          e.target === dropzone ||
+          e.target === document.getElementById("dropText")
+        ) {
+          input.click();
+        }
+      });
+
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#0078d4";
+      });
+      dropzone.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#ddd";
+      });
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#ddd";
+        const dt = e.dataTransfer;
+        if (dt && dt.files) {
+          input.files = dt.files;
+          // trigger change handler to build list and auto-upload
+          input.dispatchEvent(new Event("change"));
+        }
+      });
+
+      input.addEventListener("change", async () => {
+        // clear file list and uploaded array
+        fileList.innerHTML = "";
+        uploaded.length = 0; // Clear the array
+        conversionCompleted = false;
+        downloadAllBtn.disabled = true;
+        const files = Array.from(input.files || []);
+        if (files.length === 0) {
+          convertBtn.disabled = true;
+          return;
+        }
+        files.forEach((f, i) => createFileRow(f, i));
+        // start uploads
+        convertBtn.disabled = true;
+        status.textContent = `Uploading ${files.length} file(s)...`;
+        await Promise.all(files.map((f, i) => uploadSingleFile(f, i)));
+        status.textContent = `All files uploaded. Click Convert to start processing.`;
+        // enable convert when all uploaded
+        const allUploaded = uploaded.every((u) => u && u.id);
+        convertBtn.disabled = !allUploaded;
+      });
+
+      async function uploadSingleFile(file, idx) {
+        const entry = uploaded[idx];
+        if (!entry) return;
+        entry.statusEl.textContent = "uploading";
+
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/upload");
+          xhr.upload.addEventListener("progress", (e) => {
+            if (e.lengthComputable) {
+              const pct = Math.round((e.loaded / e.total) * 100);
+              entry.progressEl.value = pct;
+            }
+          });
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              const res = JSON.parse(xhr.responseText);
+              entry.id = res.id;
+              entry.status = "uploaded";
+              entry.statusEl.textContent = "uploaded";
+              entry.progressEl.value = 100;
+              // leave downloadBtn disabled until conversion is done
+              resolve(res);
+            } else {
+              entry.statusEl.textContent = "upload error";
+              reject(new Error("upload failed"));
+            }
+          };
+          xhr.onerror = () => {
+            entry.statusEl.textContent = "upload error";
+            reject(new Error("upload error"));
+          };
+          const fd = new FormData();
+          fd.append("file", file, file.name);
+          xhr.send(fd);
+        });
+      }
+
+      convertBtn.addEventListener("click", async () => {
+        // gather ids
+        const ids = uploaded.filter((u) => u && u.id).map((u) => u.id);
+        if (ids.length === 0) return;
+        convertBtn.disabled = true;
+        downloadAllBtn.disabled = true;
+        // disable download buttons during conversion
+        uploaded.forEach((u) => {
+          if (u) u.downloadBtn.disabled = true;
+        });
+        status.textContent = "Starting conversion...";
+        try {
+          const res = await fetch("/convert", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              file_ids: ids,
+              parser: parserSelect.value,
+              merge: true, // Always merge tables into single CSV per PDF
+            }),
+          });
+          const j = await res.json();
+          if (!j.started) throw new Error("failed to start");
+          status.textContent = "Conversion started. Monitoring progress...";
+          // Poll statuses for each file until done
+          await monitorConversion(ids);
+          status.textContent = "Conversion complete for all files.";
+          conversionCompleted = true;
+          // Keep convert button disabled after successful conversion
+          // Enable download all button
+          downloadAllBtn.disabled = false;
+        } catch (err) {
+          status.textContent = "Error starting conversion: " + err.message;
+          // Re-enable convert button on error
+          convertBtn.disabled = false;
+        }
+      });
+
+      async function monitorConversion(ids) {
+        const pending = new Set(ids);
+        while (pending.size > 0) {
+          await Promise.all(
+            Array.from(pending).map(async (fid) => {
+              try {
+                const r = await fetch("/status/" + fid);
+                if (!r.ok) return;
+                const info = await r.json();
+                const entry = uploaded.find((u) => u && u.id === fid);
+                if (entry) {
+                  entry.progressEl.value = info.progress || 0;
+                  entry.statusEl.textContent =
+                    info.status + (info.error ? ` (${info.error})` : "");
+                  if (info.status === "done") {
+                    // enable download button and set file id
+                    entry.downloadBtn.dataset.fileId = fid;
+                    entry.downloadBtn.disabled = false;
+                    pending.delete(fid);
+                  } else if (info.status === "error") {
+                    pending.delete(fid);
+                  }
+                }
+              } catch (e) {
+                // ignore transient errors
+              }
+            })
+          );
+          // sleep 800ms
+          await new Promise((r) => setTimeout(r, 800));
+        }
+      }
+
+      // Download All button handler
+      downloadAllBtn.addEventListener("click", async () => {
+        const completedFiles = uploaded.filter(
+          (u) => u && u.id && u.downloadBtn.dataset.fileId
+        );
+        if (completedFiles.length === 0) {
+          status.textContent = "No files available to download.";
+          return;
+        }
+
+        downloadAllBtn.disabled = true;
+        downloadAllBtn.textContent = "Downloading...";
+
+        // Disable individual download buttons
+        completedFiles.forEach((u) => {
+          u.downloadBtn.disabled = true;
+        });
+
+        try {
+          // Collect all file IDs
+          const fileIds = completedFiles.map(
+            (u) => u.downloadBtn.dataset.fileId
+          );
+
+          // Request ZIP from backend
+          const response = await fetch("/download_all", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file_ids: fileIds }),
+          });
+
+          if (!response.ok) throw new Error("Failed to download files");
+
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+
+          // Get filename from Content-Disposition header or use default
+          const contentDisposition = response.headers.get(
+            "Content-Disposition"
+          );
+          let filename = "converted_files.zip";
+          if (contentDisposition) {
+            const match = contentDisposition.match(
+              /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+            );
+            if (match && match[1]) {
+              filename = match[1].replace(/['"]/g, "");
+            }
+          }
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          status.textContent = `Downloaded ${completedFiles.length} file(s) as ZIP.`;
+          downloadAllBtn.textContent = "Download All";
+          downloadAllBtn.disabled = false;
+        } catch (err) {
+          status.textContent = "Error downloading files: " + err.message;
+          downloadAllBtn.textContent = "Download All";
+          downloadAllBtn.disabled = false;
+          // Re-enable individual download buttons on error
+          completedFiles.forEach((u) => {
+            u.downloadBtn.disabled = false;
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
