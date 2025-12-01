@@ -1,0 +1,40 @@
+"""Shared constants across services."""
+
+# File constraints
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+ALLOWED_EXTENSIONS = {'.pdf'}
+MAX_FILES_PER_REQUEST = 10
+
+# Storage paths
+UPLOAD_PATH = 'uploads'
+CONVERTED_PATH = 'converted'
+TEMP_PATH = 'temp'
+
+# API Configuration
+API_VERSION = 'v1'
+API_PREFIX = f'/api/{API_VERSION}'
+
+# Rate limiting
+RATE_LIMIT_UPLOADS = 100  # per hour
+RATE_LIMIT_CONVERSIONS = 50  # per hour
+
+# Conversion settings
+DEFAULT_PARSER = 'pdfplumber'
+CONVERSION_TIMEOUT = 300  # seconds
+POLLING_INTERVAL = 1000  # milliseconds
+
+# Status codes
+STATUS_UPLOADING = 'uploading'
+STATUS_UPLOADED = 'uploaded'
+STATUS_CONVERTING = 'converting'
+STATUS_COMPLETED = 'completed'
+STATUS_ERROR = 'error'
+
+# Error codes
+ERROR_INVALID_FILE_TYPE = 'INVALID_FILE_TYPE'
+ERROR_FILE_TOO_LARGE = 'FILE_TOO_LARGE'
+ERROR_UPLOAD_FAILED = 'UPLOAD_FAILED'
+ERROR_CONVERSION_FAILED = 'CONVERSION_FAILED'
+ERROR_FILE_NOT_FOUND = 'FILE_NOT_FOUND'
+ERROR_INVALID_PARSER = 'INVALID_PARSER'
+ERROR_RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'

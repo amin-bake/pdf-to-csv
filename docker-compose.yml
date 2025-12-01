@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+      target: builder
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    networks:
+      - pdf-converter
+
+  upload-service:
+    build:
+      context: .
+      dockerfile: docker/upload/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+      - PORT=5001
+      - STORAGE_BACKEND=local
+      - CORS_ORIGINS=http://localhost:3000
+    volumes:
+      - ./services/upload:/app
+      - ./shared:/app/shared
+      - upload-data:/app/data
+    command: python app.py
+    networks:
+      - pdf-converter
+
+  conversion-service:
+    build:
+      context: .
+      dockerfile: docker/conversion/Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+      - PORT=5002
+      - STORAGE_BACKEND=local
+      - UPLOAD_SERVICE_URL=http://upload-service:5001
+      - DOWNLOAD_SERVICE_URL=http://download-service:5003
+    volumes:
+      - ./services/conversion:/app
+      - ./shared:/app/shared
+      - conversion-data:/app/data
+    command: python app.py
+    depends_on:
+      - upload-service
+    networks:
+      - pdf-converter
+
+  download-service:
+    build:
+      context: .
+      dockerfile: docker/download/Dockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - FLASK_ENV=development
+      - PORT=5003
+      - STORAGE_BACKEND=local
+      - CONVERSION_SERVICE_URL=http://conversion-service:5002
+    volumes:
+      - ./services/download:/app
+      - ./shared:/app/shared
+      - download-data:/app/data
+    command: python app.py
+    depends_on:
+      - conversion-service
+    networks:
+      - pdf-converter
+
+volumes:
+  upload-data:
+  conversion-data:
+  download-data:
+
+networks:
+  pdf-converter:
+    name: pdf-converter-dev

@@ -64,3 +64,11 @@ converted/
 *.pdf
 *.csv
 *.zip
+
+# Documentation
+docs
+
+# Next.js
+.next/
+/out/
+node_modules
