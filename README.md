@@ -7,7 +7,8 @@
 
 A modern, scalable web application that converts PDF files to CSV format using microservices architecture. Built with Next.js frontend and Flask microservices, featuring real-time progress tracking, drag-and-drop interface, and cloud-ready deployment.
 
-<img width="1890" height="929" alt="Screenshot 2025-12-02 164118" src="https://github.com/user-attachments/assets/44c4806b-b23d-4270-b428-4a4ed61a36f1" />
+<img width="1893" height="933" alt="image" src="https://github.com/user-attachments/assets/a582a824-81dd-4588-897c-4d4f4fd9be44" />
+
 
 ## 🏗️ Architecture
 
