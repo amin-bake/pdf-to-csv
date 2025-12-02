@@ -36,33 +36,52 @@ We welcome feature requests! Please open an issue with:
 git clone https://github.com/YOUR_USERNAME/pdf-to-csv.git
 cd pdf-to-csv
 
-# Create virtual environment
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
 # Install dependencies
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+npm install
 
-# Run the application
-python app.py
+# Set up environment variables
+cd frontend
+cp .env.local.example .env.local
+cd ..
+
+# Start all services
+npm run dev
 ```
+
+This will start:
+- Frontend at http://localhost:3000
+- Upload Service at http://localhost:5001
+- Conversion Service at http://localhost:5002
+- Download Service at http://localhost:5003
 
 #### Running Tests
 
 ```powershell
-# Run individual test files
-python test_e2e.py
-python test_upload.py
-python test_download_types.py
-python test_download_all.py
+# Frontend tests
+cd frontend
+npm test
+
+# Backend service tests
+cd services/upload
+pytest
+
+# E2E tests
+cd tests
+pytest test_e2e.py
 ```
 
 ### Code Style
 
+#### Frontend (TypeScript)
+- Follow TypeScript best practices
+- Use ESLint and Prettier configurations
+- Prefer functional components with hooks
+- Use proper TypeScript types (avoid `any`)
+
+#### Backend (Python)
 - Follow PEP 8 guidelines for Python code
-- Use clear, descriptive variable and function names
-- Add comments for complex logic
+- Use type hints where applicable
+- Add docstrings for functions and classes
 - Keep functions focused and modular
 
 ### Commit Messages
