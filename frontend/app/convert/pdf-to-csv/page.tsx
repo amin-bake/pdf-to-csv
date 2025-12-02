@@ -227,7 +227,6 @@ export default function PdfToCsvPage() {
       {/* Header with Theme Toggle */}
       <div className="flex justify-end gap-2 mb-4">
         <ColorThemeSelector />
-      <div className="flex justify-end mb-4">
         <ThemeToggle />
       </div>
 

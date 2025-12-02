@@ -441,27 +441,28 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-@layer base {
-  * {
-    border-color: var(--color-border);
+  @layer base {
+    * {
+      border-color: var(--color-border);
+    }
+    body {
+      background-color: var(--color-background);
+      color: var(--color-foreground);
+      font-feature-settings: "rlig" 1, "calt" 1;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
   }
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-feature-settings: "rlig" 1, "calt" 1;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-}
 
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-.animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
 }
