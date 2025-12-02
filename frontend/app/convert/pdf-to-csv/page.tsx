@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ColorThemeSelector } from "@/components/color-theme-selector";
 
 export default function PdfToCsvPage() {
   const {
@@ -224,6 +225,8 @@ export default function PdfToCsvPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header with Theme Toggle */}
+      <div className="flex justify-end gap-2 mb-4">
+        <ColorThemeSelector />
       <div className="flex justify-end mb-4">
         <ThemeToggle />
       </div>

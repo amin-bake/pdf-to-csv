@@ -58,6 +58,8 @@ pdf-to-csv/
 - ⬇️ **Flexible Downloads**: Download files individually or all at once as a ZIP
 - 🎯 **Dual Parser Support**: Choose between pdfplumber (default) or Tabula
 - 💻 **Modern UI**: Next.js with Tailwind CSS and shadcn/ui components
+- 🎨 **Multiple Color Themes**: Switch between "Earthy Forest" (green), "Cherry Blossom Bloom" (red/pink), and "Pastel Rainbow Fantasy" (dreamy pastels)
+- 🌓 **Dark Mode Support**: Full light/dark mode for all color themes
 - ⚡ **Background Processing**: Async conversion with React Query
 - 🐳 **Docker Ready**: Complete containerization with docker-compose
 - ☁️ **Cloud Native**: Deploy frontend to Vercel, backend to any cloud provider
@@ -157,6 +159,9 @@ Then open your browser and navigate to **http://localhost:5000**
 
 Comprehensive documentation is available in the `/docs` directory:
 
+
+Comprehensive documentation is available in the `/docs` directory:
+
 - **[MIGRATION_PLAN.md](docs/MIGRATION_PLAN.md)**: 8-week migration strategy from monolith to microservices
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Detailed technical architecture and design decisions
 - **[API_SPECIFICATION.md](docs/API_SPECIFICATION.md)**: Complete RESTful API documentation
@@ -225,6 +230,11 @@ vercel --prod
 ```
 
 ### Backend Services
+
+- **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
+- **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)
+- **Kubernetes**: See [DOCKER_KUBERNETES.md](docs/DOCKER_KUBERNETES.md#kubernetes-deployment)
+
 
 - **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
 - **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)

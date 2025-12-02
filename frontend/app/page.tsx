@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { FileText, Table, FileSpreadsheet, ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ColorThemeSelector } from "@/components/color-theme-selector";
 
 const conversionTypes = [
   {
@@ -51,6 +52,8 @@ export default function Home() {
     <div className="relative min-h-screen">
       {/* Header with Theme Toggle */}
       <header className="container mx-auto px-4 py-4 max-w-7xl">
+        <div className="flex justify-end gap-2">
+          <ColorThemeSelector />
         <div className="flex justify-end">
           <ThemeToggle />
         </div>
@@ -59,6 +62,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-hunter-green to-fern bg-clip-text text-transparent">
             File Conversion Suite
           </h1>
@@ -83,6 +87,7 @@ export default function Home() {
                 <Card
                   className={`h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                     conversion.available
+                      ? "border-border hover:border-primary"
                       ? "border-border hover:border-fern"
                       : "opacity-60 bg-muted/50"
                   }`}
@@ -92,6 +97,7 @@ export default function Home() {
                       <div
                         className={`p-3 rounded-lg ${
                           conversion.available
+                            ? "bg-accent/10 text-accent"
                             ? "bg-fern/10 text-fern"
                             : "bg-muted text-muted-foreground"
                         }`}
@@ -99,6 +105,7 @@ export default function Home() {
                         <Icon className="h-6 w-6" />
                       </div>
                       {conversion.available && (
+                        <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-fern group-hover:translate-x-1 transition-all" />
                       )}
                       {!conversion.available && (
@@ -114,6 +121,7 @@ export default function Home() {
                   </CardHeader>
                   {conversion.available && (
                     <CardContent>
+                      <div className="text-sm text-primary font-medium group-hover:underline">
                       <div className="text-sm text-fern font-medium group-hover:underline">
                         Start Converting →
                       </div>
@@ -128,6 +136,9 @@ export default function Home() {
         {/* Features Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
           <div className="text-center">
+            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-6 h-6 text-accent"
             <div className="w-12 h-12 rounded-full bg-fern/10 flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-fern"
@@ -150,6 +161,9 @@ export default function Home() {
           </div>
 
           <div className="text-center">
+            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-6 h-6 text-accent"
             <div className="w-12 h-12 rounded-full bg-fern/10 flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-fern"
@@ -172,6 +186,9 @@ export default function Home() {
           </div>
 
           <div className="text-center">
+            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-6 h-6 text-accent"
             <div className="w-12 h-12 rounded-full bg-fern/10 flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-fern"
