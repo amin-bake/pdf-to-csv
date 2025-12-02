@@ -163,6 +163,131 @@ Migrated application from monolithic Flask to modern microservices architecture 
 
 ### Added
 
+## [0.1.0] - 2025-12-02
+
+### 🎉 Microservices Architecture Implementation
+
+Migrated application from monolithic Flask to modern microservices architecture with Next.js frontend.
+
+### Added
+
+#### Frontend (Next.js 15 + TypeScript)
+- **Modern UI Framework**: Next.js 15 with App Router and TypeScript 5
+- **Styling**: Tailwind CSS v4 with custom design system
+- **Dark Mode**: Full dark mode support with system detection and theme toggle
+- **Component Library**: shadcn/ui components with Radix UI primitives
+- **State Management**: Zustand for global state, React Query for server state
+- **File Upload**: Enhanced drag-and-drop with real-time progress tracking
+- **Status Tracking**: Visual file cards with status badges (uploading, uploaded, converting, completed, error)
+- **Responsive Design**: Mobile-first design that works on all devices
+
+#### Backend Microservices
+- **Upload Service (Port 5001)**: 
+  - File upload with validation (PDF, 50MB max)
+  - UUID-based file identification
+  - Health check endpoint
+  - CORS support for frontend integration
+
+- **Conversion Service (Port 5002)**:
+  - PDF to CSV conversion with pdfplumber
+  - Background job processing with threading
+  - Real-time progress tracking
+  - Table extraction with merge support
+  - Fallback to text extraction
+  - Job status polling API
+
+- **Download Service (Port 5003)**:
+  - Single file download
+  - Batch download as ZIP with original filenames preserved
+  - File metadata endpoints
+  - Cleanup operations
+
+#### Infrastructure
+- **Docker Compose**: Full development environment setup
+- **Shared Libraries**: Common utilities and storage abstraction
+- **Environment Configuration**: Service-specific environment variables
+- **Health Checks**: All services expose health endpoints
+
+### Changed
+
+#### Architecture
+- **Microservices Pattern**: Separated concerns into independent services
+- **API Communication**: RESTful APIs with CORS support
+- **File Storage**: Shared temporary storage with job-based organization
+- **Progress Tracking**: Polling-based status updates (WebSocket support planned)
+
+#### User Experience
+- **Smart Downloads**: Single file downloads as CSV, multiple files as ZIP
+- **Original Filenames**: Preserved in ZIP archives
+- **Real-time Feedback**: Visual progress bars and status indicators
+- **Error Handling**: Per-file error tracking and display
+- **Theme Support**: Light, dark, and system theme options
+
+#### Development
+- **TypeScript**: Full type safety across frontend
+- **Modern React**: Hooks, async operations, and optimistic updates
+- **API Client**: Centralized API communication layer
+- **Custom Hooks**: Reusable logic for upload, conversion, and download
+
+### Fixed
+
+- File status updates now properly track from upload through conversion
+- Download functionality correctly routes to Download Service (was trying port 5000)
+- Individual file downloads now work alongside batch downloads
+- ZIP archives preserve original filenames (was using file IDs)
+- Theme toggle icon properly changes color on hover
+
+### Technical Details
+
+#### Frontend Stack
+- Next.js 15.5.6 with App Router
+- React 19 with TypeScript 5
+- Tailwind CSS v4
+- shadcn/ui + Radix UI
+- Zustand + React Query
+- Lucide React icons
+
+#### Backend Stack
+- Flask 3.0.0
+- pdfplumber 0.11.8 for PDF parsing
+- Python 3.11+
+- In-memory job tracking
+- Temporary file system storage
+
+#### Deployment
+- Frontend: Ready for Vercel deployment
+- Services: Containerized with Docker
+- Local development: npm run dev (starts all services)
+- Production: docker-compose with environment-specific configs
+
+### Migration Status
+
+- ✅ **Phase 1**: Project restructuring and documentation
+- ✅ **Phase 2**: Frontend development with Next.js 15 + dark mode
+- ✅ **Phase 3**: Backend microservices (Upload, Conversion, Download)
+- 📋 **Phase 4**: Storage & Infrastructure improvements (S3, Redis)
+- 📋 **Phase 5**: Testing & Documentation
+- 📋 **Phase 6**: Production deployment & monitoring
+
+### Breaking Changes
+
+- **API Endpoints**: New service-specific URLs (5001, 5002, 5003)
+- **Environment Variables**: New `NEXT_PUBLIC_*_SERVICE_URL` variables required
+- **File IDs**: Now use UUIDs instead of timestamp-based IDs
+- **Response Format**: Updated JSON structure for consistency
+
+### Deprecated
+
+- ❌ Legacy monolithic Flask app (moved to `/legacy` folder)
+- ❌ Old API at port 5000
+- ❌ In-app UI from Flask templates (replaced with Next.js)
+
+---
+
+## [0.0.1] - 2025-11-12
+
+### Added
+
 - Initial prototype of PDF to CSV converter (monolithic Flask application)
 - Multiple file upload support with drag & drop interface
 - Real-time upload and conversion progress tracking

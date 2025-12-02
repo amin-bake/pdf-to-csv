@@ -2,6 +2,7 @@
 
 @theme {
   /* Earthy Forest Color Palette (Green Theme) */
+  /* Custom Color Palette */
   --color-dust-grey-100: #312e24;
   --color-dust-grey-200: #615b48;
   --color-dust-grey-300: #92896c;
@@ -258,6 +259,7 @@
   --color-porcelain: var(--color-porcelain-500);
 
   /* UI Colors mapped to custom palette - Default: Earthy Forest */
+  /* UI Colors mapped to custom palette */
   --color-background: #f8f7f5;
   --color-foreground: #0c120d;
   --color-border: #dad7cd;
@@ -289,6 +291,7 @@
 }
 
 /* Dark mode colors - Earthy Forest (default) */
+/* Dark mode colors */
 .dark {
   --color-background: #0c120d;
   --color-foreground: #f8f7f5;
@@ -438,6 +441,10 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);

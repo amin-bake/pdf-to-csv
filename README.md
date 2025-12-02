@@ -7,6 +7,8 @@
 
 A modern, scalable web application that converts PDF files to CSV format using microservices architecture. Built with Next.js frontend and Flask microservices, featuring real-time progress tracking, drag-and-drop interface, and cloud-ready deployment.
 
+<img width="1890" height="929" alt="Screenshot 2025-12-02 164118" src="https://github.com/user-attachments/assets/44c4806b-b23d-4270-b428-4a4ed61a36f1" />
+
 ## 🏗️ Architecture
 
 This project uses a **microservices architecture** with the following components:
@@ -157,6 +159,9 @@ Then open your browser and navigate to **http://localhost:5000**
 
 Comprehensive documentation is available in the `/docs` directory:
 
+
+Comprehensive documentation is available in the `/docs` directory:
+
 - **[MIGRATION_PLAN.md](docs/MIGRATION_PLAN.md)**: 8-week migration strategy from monolith to microservices
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Detailed technical architecture and design decisions
 - **[API_SPECIFICATION.md](docs/API_SPECIFICATION.md)**: Complete RESTful API documentation
@@ -225,6 +230,11 @@ vercel --prod
 ```
 
 ### Backend Services
+
+- **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
+- **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)
+- **Kubernetes**: See [DOCKER_KUBERNETES.md](docs/DOCKER_KUBERNETES.md#kubernetes-deployment)
+
 
 - **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
 - **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)
