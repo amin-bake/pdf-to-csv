@@ -1,0 +1,31 @@
+{
+  "name": "pdf-to-csv-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modern PDF to CSV converter with microservices architecture",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:services\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:services": "python scripts/run_services.py",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:frontend && npm run test:services",
+    "test:frontend": "cd frontend && npm test",
+    "test:services": "pytest services/",
+    "lint": "npm run lint:frontend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

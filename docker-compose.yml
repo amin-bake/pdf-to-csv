@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_UPLOAD_SERVICE_URL=http://localhost:5001
+      - NEXT_PUBLIC_CONVERSION_SERVICE_URL=http://localhost:5002
+      - NEXT_PUBLIC_DOWNLOAD_SERVICE_URL=http://localhost:5003
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    networks:
+      - pdf-converter
+    depends_on:
+      - upload-service
+      - conversion-service
+      - download-service
+
+  # Upload Service
+  upload-service:
+    build:
+      context: ./services/upload
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./services/upload:/app
+      - upload-data:/tmp/pdf-to-csv-uploads
+    networks:
+      - pdf-converter
+
+  # Conversion Service
+  conversion-service:
+    build:
+      context: ./services/conversion
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./services/conversion:/app
+      - upload-data:/tmp/pdf-to-csv-uploads
+      - converted-data:/tmp/pdf-to-csv-converted
+    networks:
+      - pdf-converter
+    depends_on:
+      - upload-service
+
+  # Download Service
+  download-service:
+    build:
+      context: ./services/download
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./services/download:/app
+      - converted-data:/tmp/pdf-to-csv-converted
+    networks:
+      - pdf-converter
+    depends_on:
+      - conversion-service
+
+volumes:
+  upload-data:
+  converted-data:
+
+networks:
+  pdf-converter:
+    driver: bridge
+
+  pdf-converter:
+    name: pdf-converter-dev

@@ -10,7 +10,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/
 lib64/
 parts/
 sdist/
@@ -64,3 +64,14 @@ converted/
 *.pdf
 *.csv
 *.zip
+
+# Documentation
+docs
+deployment
+
+# Next.js
+node_modules
+deployment
+PROJECT_READY.md
+
+# GitHub Codespaces
