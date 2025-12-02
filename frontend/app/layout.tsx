@@ -20,8 +20,21 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* Animated Background */}
         <div className="fixed inset-0 -z-10 bg-background">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#3a5a4015_1px,transparent_1px),linear-gradient(to_bottom,#3a5a4015_1px,transparent_1px)] bg-size-[14px_24px]" />
-          <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle_300px_at_50%_300px,#58815730,transparent)]" />
+          <div
+            className="absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, var(--color-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--color-primary) 1px, transparent 1px)",
+              backgroundSize: "14px 24px",
+            }}
+          />
+          <div
+            className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[600px] rounded-full opacity-20"
+            style={{
+              background:
+                "radial-gradient(circle 300px at 50% 300px, var(--color-accent), transparent)",
+            }}
+          />
         </div>
         <Providers>{children}</Providers>
       </body>

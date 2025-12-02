@@ -56,6 +56,8 @@ pdf-to-csv/
 - ⬇️ **Flexible Downloads**: Download files individually or all at once as a ZIP
 - 🎯 **Dual Parser Support**: Choose between pdfplumber (default) or Tabula
 - 💻 **Modern UI**: Next.js with Tailwind CSS and shadcn/ui components
+- 🎨 **Multiple Color Themes**: Switch between "Earthy Forest" (green), "Cherry Blossom Bloom" (red/pink), and "Pastel Rainbow Fantasy" (dreamy pastels)
+- 🌓 **Dark Mode Support**: Full light/dark mode for all color themes
 - ⚡ **Background Processing**: Async conversion with React Query
 - 🐳 **Docker Ready**: Complete containerization with docker-compose
 - ☁️ **Cloud Native**: Deploy frontend to Vercel, backend to any cloud provider
