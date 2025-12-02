@@ -335,9 +335,11 @@ For questions, issues, or feature requests:
 - 🐛 [Open an issue](https://github.com/amin-bake/pdf-to-csv/issues)
 - 💬 [Start a discussion](https://github.com/amin-bake/pdf-to-csv/discussions)
 - 📧 Contact: your-email@example.com
+
 ## 🗺️ Roadmap
 
 ### Completed ✅
+
 - [x] Initial Flask prototype (v0.0.1)
 - [x] Microservices architecture design
 - [x] Complete documentation suite
@@ -350,12 +352,14 @@ For questions, issues, or feature requests:
 - [x] Health checks for all services
 
 ### In Progress 🚧
+
 - [ ] Storage abstraction (S3 support)
 - [ ] Redis for job queue management
 - [ ] Comprehensive test suite
 - [ ] API documentation (OpenAPI/Swagger)
 
 ### Planned 📋
+
 - [ ] Production deployment (Vercel + AWS/GCP)
 - [ ] Real-time WebSocket updates
 - [ ] User authentication & authorization

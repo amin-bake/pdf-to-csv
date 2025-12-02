@@ -49,6 +49,7 @@ npm run dev
 ```
 
 This will start:
+
 - Frontend at http://localhost:3000
 - Upload Service at http://localhost:5001
 - Conversion Service at http://localhost:5002
@@ -73,12 +74,14 @@ pytest test_e2e.py
 ### Code Style
 
 #### Frontend (TypeScript)
+
 - Follow TypeScript best practices
 - Use ESLint and Prettier configurations
 - Prefer functional components with hooks
 - Use proper TypeScript types (avoid `any`)
 
 #### Backend (Python)
+
 - Follow PEP 8 guidelines for Python code
 - Use type hints where applicable
 - Add docstrings for functions and classes
