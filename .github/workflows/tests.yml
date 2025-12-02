@@ -34,6 +34,8 @@ jobs:
           pip install -r services/upload/requirements.txt
           pip install -r services/conversion/requirements.txt
           pip install -r services/download/requirements.txt
+          pip install requests==2.32.3
+          pip install pytest==7.4.3
 
       - name: Install frontend dependencies
         run: |
