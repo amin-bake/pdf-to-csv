@@ -9,7 +9,6 @@ A modern, scalable web application that converts PDF files to CSV format using m
 
 <img width="1893" height="933" alt="image" src="https://github.com/user-attachments/assets/a582a824-81dd-4588-897c-4d4f4fd9be44" />
 
-
 ## 🏗️ Architecture
 
 This project uses a **microservices architecture** with the following components:
@@ -54,7 +53,8 @@ pdf-to-csv/
 - 🏗️ **Microservices Architecture**: Scalable, independently deployable services
 - 📤 **Multiple File Upload**: Drag & drop or select multiple PDF files at once
 - 📊 **Smart Table Extraction**: Automatically detects and extracts tables from PDFs
-- 🔄 **Automatic Merging**: Combines all tables from each PDF into a single CSV file
+- 📑 **Multiple Output Formats**: Convert to CSV or Excel (.xlsx) formats
+- 🔄 **Automatic Merging**: Combines all tables from each PDF into a single output file
 - 📈 **Real-time Progress**: Visual progress bars with status polling
 - ⬇️ **Flexible Downloads**: Download files individually or all at once as a ZIP
 - 🎯 **Dual Parser Support**: Choose between pdfplumber (default) or Tabula
@@ -145,11 +145,25 @@ Then open your browser and navigate to **http://localhost:5000**
 
 ## 📖 Usage
 
-1. **Upload Files**: Drag & drop PDF files or click to browse
-2. **Select Parser**: Choose between pdfplumber (default) or Tabula
-3. **Convert**: Click "Convert uploaded files" to start processing
-4. **Monitor Progress**: Watch real-time conversion status
-5. **Download**: Download individual files or all files as ZIP
+1. **Choose Conversion Type**: Select PDF to CSV or PDF to Excel from the homepage
+2. **Upload Files**: Drag & drop PDF files or click to browse
+3. **Select Parser**: Choose between pdfplumber (default) or Tabula
+4. **Choose Output Options**:
+   - Select output format (CSV or Excel)
+   - Optionally merge all tables into a single file
+5. **Convert**: Click "Convert" to start processing
+6. **Monitor Progress**: Watch real-time conversion status
+7. **Download**: Download individual files or all files as ZIP
+
+### Conversion Formats
+
+- **PDF to CSV**: Extract tables to comma-separated values format
+  - Great for data analysis and spreadsheet import
+  - Lightweight and universally compatible
+- **PDF to Excel**: Extract tables to Excel spreadsheets (.xlsx)
+  - Multiple tables saved as separate sheets when merged
+  - Auto-adjusted column widths for better readability
+  - Native Excel format with formatting support
 
 ### Parser Options
 
@@ -159,7 +173,6 @@ Then open your browser and navigate to **http://localhost:5000**
 ## 📚 Documentation
 
 Comprehensive documentation is available in the `/docs` directory:
-
 
 Comprehensive documentation is available in the `/docs` directory:
 
@@ -235,7 +248,6 @@ vercel --prod
 - **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
 - **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)
 - **Kubernetes**: See [DOCKER_KUBERNETES.md](docs/DOCKER_KUBERNETES.md#kubernetes-deployment)
-
 
 - **AWS ECS/Fargate**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#aws-ecs)
 - **Google Cloud Run**: See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md#google-cloud-run)
