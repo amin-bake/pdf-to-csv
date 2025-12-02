@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Released]
+
+### Added
+
+- **Multi-Theme Color System**: Users can now switch between three beautiful color themes
+  - 🌲 Earthy Forest (default) - Calm greens and earth tones
+  - 🌸 Cherry Blossom Bloom - Vibrant reds and soft pinks
+  - 🌈 Pastel Rainbow Fantasy - Dreamy pastels and rainbow hues
+- **Color Theme Selector Component**: Palette icon dropdown for easy theme switching
+- **Theme Persistence**: Selected theme saved to localStorage
+- **Full Dark Mode Support**: Each color theme has optimized light and dark variants (6 total combinations)
+- **Smooth Theme Transitions**: 0.3s ease transitions for professional feel
+- **Dynamic Background Gradients**: Animated backgrounds adapt to selected theme
+- **Comprehensive Theme Documentation**: Added `docs/COLOR_THEMES.md` with full implementation guide
+
+### Changed
+
+- Updated all hardcoded color values to use theme-aware CSS custom properties
+- Refactored background gradients in layout to use dynamic CSS variables
+- Enhanced global CSS with 27 new color families (243 color shades total)
+- Updated homepage hero, cards, and feature icons to respect active theme
+
 ## [0.1.0] - 2025-12-02
 
 ### 🎉 Microservices Architecture Implementation
@@ -14,6 +36,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Added
 
 #### Frontend (Next.js 15 + TypeScript)
+
 - **Modern UI Framework**: Next.js 15 with App Router and TypeScript 5
 - **Styling**: Tailwind CSS v4 with custom design system
 - **Dark Mode**: Full dark mode support with system detection and theme toggle
@@ -24,13 +47,16 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - **Responsive Design**: Mobile-first design that works on all devices
 
 #### Backend Microservices
-- **Upload Service (Port 5001)**: 
+
+- **Upload Service (Port 5001)**:
+
   - File upload with validation (PDF, 50MB max)
   - UUID-based file identification
   - Health check endpoint
   - CORS support for frontend integration
 
 - **Conversion Service (Port 5002)**:
+
   - PDF to CSV conversion with pdfplumber
   - Background job processing with threading
   - Real-time progress tracking
@@ -45,6 +71,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
   - Cleanup operations
 
 #### Infrastructure
+
 - **Docker Compose**: Full development environment setup
 - **Shared Libraries**: Common utilities and storage abstraction
 - **Environment Configuration**: Service-specific environment variables
@@ -53,12 +80,14 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Changed
 
 #### Architecture
+
 - **Microservices Pattern**: Separated concerns into independent services
 - **API Communication**: RESTful APIs with CORS support
 - **File Storage**: Shared temporary storage with job-based organization
 - **Progress Tracking**: Polling-based status updates (WebSocket support planned)
 
 #### User Experience
+
 - **Smart Downloads**: Single file downloads as CSV, multiple files as ZIP
 - **Original Filenames**: Preserved in ZIP archives
 - **Real-time Feedback**: Visual progress bars and status indicators
@@ -66,6 +95,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - **Theme Support**: Light, dark, and system theme options
 
 #### Development
+
 - **TypeScript**: Full type safety across frontend
 - **Modern React**: Hooks, async operations, and optimistic updates
 - **API Client**: Centralized API communication layer
@@ -82,6 +112,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Technical Details
 
 #### Frontend Stack
+
 - Next.js 15.5.6 with App Router
 - React 19 with TypeScript 5
 - Tailwind CSS v4
@@ -90,6 +121,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - Lucide React icons
 
 #### Backend Stack
+
 - Flask 3.0.0
 - pdfplumber 0.11.8 for PDF parsing
 - Python 3.11+
@@ -97,6 +129,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - Temporary file system storage
 
 #### Deployment
+
 - Frontend: Ready for Vercel deployment
 - Services: Containerized with Docker
 - Local development: npm run dev (starts all services)
