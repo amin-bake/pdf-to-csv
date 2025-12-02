@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api, type UploadResponse } from "@/lib/api";
 
 interface UploadOptions {
-  onSuccess?: (file: UploadResponse) => void;
+  onSuccess?: (tempFileId: string, serverResponse: UploadResponse) => void;
   onError?: (fileId: string, error: Error) => void;
   onProgress?: (fileId: string, progress: number) => void;
 }
@@ -21,7 +21,7 @@ export function useUpload(options?: UploadOptions) {
 
       setProgress((prev) => ({ ...prev, [fileId]: 100 }));
       options?.onProgress?.(fileId, 100);
-      options?.onSuccess?.(result);
+      options?.onSuccess?.(fileId, result); // Pass both temp ID and server response
 
       return result;
     } catch (error) {

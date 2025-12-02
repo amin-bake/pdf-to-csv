@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useUploadStore } from "@/store/uploadStore";
 import { useUpload } from "@/hooks/useUpload";
 import { useConversion, useConversionStatus } from "@/hooks/useConversion";
+import { api } from "@/lib/api";
 import {
   Download,
   FileDown,
@@ -49,8 +50,10 @@ export default function PdfToCsvPage() {
     progress,
     error: uploadError,
   } = useUpload({
-    onSuccess: (file) => {
-      updateFile(file.fileId, {
+    onSuccess: (tempFileId, serverResponse) => {
+      // Update the file with the server's fileId
+      updateFile(tempFileId, {
+        fileId: serverResponse.fileId, // Update to server's ID
         status: "uploaded",
         progress: 100,
       });
@@ -174,6 +177,18 @@ export default function PdfToCsvPage() {
     setError(null);
   };
 
+  const handleDownloadFile = async (fileId: string) => {
+    const file = files.find((f) => f.fileId === fileId);
+    if (!file) return;
+
+    try {
+      await api.download(file.fileId, file.fileName.replace(".pdf", ".csv"));
+    } catch (err) {
+      console.error("Download error:", err);
+      setError("Failed to download file");
+    }
+  };
+
   const handleDownloadAll = async () => {
     const completedFiles = files.filter((f) => f.status === "completed");
 
@@ -182,22 +197,23 @@ export default function PdfToCsvPage() {
       return;
     }
 
-    for (const file of completedFiles) {
-      try {
-        const blob = await fetch(`/api/download/${file.fileId}`).then((r) =>
-          r.blob()
-        );
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = file.fileName.replace(".pdf", ".csv");
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } catch (err) {
-        console.error("Download error:", err);
+    try {
+      if (completedFiles.length === 1) {
+        // Single file: download directly
+        const file = completedFiles[0];
+        await api.download(file.fileId, file.fileName.replace(".pdf", ".csv"));
+      } else {
+        // Multiple files: download as ZIP with original names
+        const fileIds = completedFiles.map((f) => f.fileId);
+        const fileNames = completedFiles.reduce((acc, f) => {
+          acc[f.fileId] = f.fileName.replace(".pdf", ".csv");
+          return acc;
+        }, {} as Record<string, string>);
+        await api.downloadBatch(fileIds, fileNames);
       }
+    } catch (err) {
+      console.error("Download error:", err);
+      setError("Failed to download files");
     }
   };
 
@@ -357,6 +373,7 @@ export default function PdfToCsvPage() {
                 <FileCard
                   key={file.fileId}
                   file={file}
+                  onDownload={handleDownloadFile}
                   onRemove={() => handleRemoveFile(file.fileId)}
                 />
               ))}

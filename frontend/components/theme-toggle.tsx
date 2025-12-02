@@ -41,15 +41,19 @@ export function ThemeToggle() {
   // Determine which icon to show based on the current theme
   const getIcon = () => {
     if (theme === "system") {
-      return <Monitor className="h-[1.2rem] w-[1.2rem] " />;
+      return (
+        <Monitor className="h-[1.2rem] w-[1.2rem] text-primary group-hover:text-white transition-colors" />
+      );
     }
 
     if (theme === "dark" || resolvedTheme === "dark") {
-      return <Moon className="h-[1.2rem] w-[1.2rem]" />;
+      return (
+        <Moon className="h-[1.2rem] w-[1.2rem] text-primary group-hover:text-white transition-colors" />
+      );
     }
 
     return (
-      <Sun className="h-[1.2rem] w-[1.2rem] transition-transform duration-300 ease-in-out group-hover:rotate-180" />
+      <Sun className="h-[1.2rem] w-[1.2rem] text-primary group-hover:text-white transition-all duration-300 ease-in-out group-hover:rotate-180" />
     );
   };
 

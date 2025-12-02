@@ -61,6 +61,7 @@ export function FileCard({
                 size="sm"
                 onClick={() => onDownload?.(file.fileId)}
                 disabled={disabled}
+                className="cursor-pointer"
               >
                 <Download className="h-4 w-4 mr-1" />
                 Download
@@ -71,6 +72,7 @@ export function FileCard({
               variant="ghost"
               onClick={() => onRemove?.(file.fileId)}
               disabled={disabled}
+              className="cursor-pointer"
             >
               <X className="h-4 w-4" />
             </Button>

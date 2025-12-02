@@ -1,16 +1,18 @@
 version: "3.8"
 
 services:
+  # Next.js Frontend
   frontend:
     build:
       context: ./frontend
-      dockerfile: ../docker/frontend/Dockerfile
-      target: builder
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_UPLOAD_SERVICE_URL=http://localhost:5001
+      - NEXT_PUBLIC_CONVERSION_SERVICE_URL=http://localhost:5002
+      - NEXT_PUBLIC_DOWNLOAD_SERVICE_URL=http://localhost:5003
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -18,74 +20,72 @@ services:
     command: npm run dev
     networks:
       - pdf-converter
+    depends_on:
+      - upload-service
+      - conversion-service
+      - download-service
 
+  # Upload Service
   upload-service:
     build:
-      context: .
-      dockerfile: docker/upload/Dockerfile
+      context: ./services/upload
+      dockerfile: Dockerfile
     ports:
       - "5001:5001"
     environment:
       - FLASK_ENV=development
-      - PORT=5001
-      - STORAGE_BACKEND=local
-      - CORS_ORIGINS=http://localhost:3000
+      - FLASK_DEBUG=1
     volumes:
       - ./services/upload:/app
-      - ./shared:/app/shared
-      - upload-data:/app/data
-    command: python app.py
+      - upload-data:/tmp/pdf-to-csv-uploads
     networks:
       - pdf-converter
 
+  # Conversion Service
   conversion-service:
     build:
-      context: .
-      dockerfile: docker/conversion/Dockerfile
+      context: ./services/conversion
+      dockerfile: Dockerfile
     ports:
       - "5002:5002"
     environment:
+    environment:
       - FLASK_ENV=development
-      - PORT=5002
-      - STORAGE_BACKEND=local
-      - UPLOAD_SERVICE_URL=http://upload-service:5001
-      - DOWNLOAD_SERVICE_URL=http://download-service:5003
+      - FLASK_DEBUG=1
     volumes:
       - ./services/conversion:/app
-      - ./shared:/app/shared
-      - conversion-data:/app/data
-    command: python app.py
-    depends_on:
-      - upload-service
+      - upload-data:/tmp/pdf-to-csv-uploads
+      - converted-data:/tmp/pdf-to-csv-converted
     networks:
       - pdf-converter
+    depends_on:
+      - upload-service
 
+  # Download Service
   download-service:
     build:
-      context: .
-      dockerfile: docker/download/Dockerfile
+      context: ./services/download
+      dockerfile: Dockerfile
     ports:
       - "5003:5003"
     environment:
       - FLASK_ENV=development
-      - PORT=5003
-      - STORAGE_BACKEND=local
-      - CONVERSION_SERVICE_URL=http://conversion-service:5002
+      - FLASK_DEBUG=1
     volumes:
       - ./services/download:/app
-      - ./shared:/app/shared
-      - download-data:/app/data
-    command: python app.py
-    depends_on:
-      - conversion-service
+      - converted-data:/tmp/pdf-to-csv-converted
     networks:
       - pdf-converter
+    depends_on:
+      - conversion-service
 
 volumes:
   upload-data:
-  conversion-data:
-  download-data:
+  converted-data:
 
 networks:
+  pdf-converter:
+    driver: bridge
+
   pdf-converter:
     name: pdf-converter-dev
