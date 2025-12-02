@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, nextjs-frontend]
   pull_request:
-    branches: [main, develop]
+    branches: [main, nextjs-frontend]
 
 jobs:
   test:
@@ -12,37 +12,79 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12"]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r services/upload/requirements.txt
+          pip install -r services/conversion/requirements.txt
+          pip install -r services/download/requirements.txt
 
-      - name: Start Flask server (Unix)
+      - name: Install frontend dependencies
+        run: |
+          npm install
+          cd frontend && npm install
+
+      - name: Start Upload Service (Unix)
         if: runner.os != 'Windows'
         run: |
-          python app.py &
-          sleep 5
+          cd services/upload && python app.py &
+          sleep 3
 
-      - name: Start Flask server (Windows)
+      - name: Start Conversion Service (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cd services/conversion && python app.py &
+          sleep 3
+
+      - name: Start Download Service (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cd services/download && python app.py &
+          sleep 3
+
+      - name: Start Upload Service (Windows)
         if: runner.os == 'Windows'
         run: |
+          cd services/upload
           Start-Process python -ArgumentList "app.py" -NoNewWindow
-          Start-Sleep -Seconds 5
+          Start-Sleep -Seconds 3
+        shell: pwsh
+
+      - name: Start Conversion Service (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd services/conversion
+          Start-Process python -ArgumentList "app.py" -NoNewWindow
+          Start-Sleep -Seconds 3
+        shell: pwsh
+
+      - name: Start Download Service (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd services/download
+          Start-Process python -ArgumentList "app.py" -NoNewWindow
+          Start-Sleep -Seconds 3
         shell: pwsh
 
       - name: Run tests
         run: |
+          cd tests
           python test_e2e.py
           python test_upload.py
           python test_download_types.py
