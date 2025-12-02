@@ -27,7 +27,7 @@ const conversionTypes = [
     description: "Convert PDF documents to Excel spreadsheets",
     icon: FileSpreadsheet,
     href: "/convert/pdf-to-excel",
-    available: false,
+    available: true,
   },
   {
     id: "pdf-to-json",

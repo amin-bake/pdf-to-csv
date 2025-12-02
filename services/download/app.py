@@ -86,12 +86,21 @@ def download_file(file_id):
         }), 404
     
     try:
+        # Determine the correct MIME type based on file extension
+        file_ext = os.path.splitext(file_path)[1].lower()
+        if file_ext == '.xlsx':
+            mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        elif file_ext == '.csv':
+            mimetype = 'text/csv'
+        else:
+            mimetype = 'application/octet-stream'
+        
         # Send file as attachment
         return send_file(
             file_path,
             as_attachment=True,
             download_name=os.path.basename(file_path),
-            mimetype='text/csv'
+            mimetype=mimetype
         )
     except Exception as e:
         return jsonify({

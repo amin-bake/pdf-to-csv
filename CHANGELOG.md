@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **PDF to Excel Conversion**: New conversion format supporting Excel (.xlsx) output
+  - Extract tables from PDFs to Excel spreadsheets
+  - Multi-sheet support when merging tables
+  - Auto-adjusted column widths for better readability
+  - Dedicated `/convert/pdf-to-excel` page with full UI
+  - Backend support with openpyxl library
 - **Multi-Theme Color System**: Users can now switch between three beautiful color themes
   - 🌲 Earthy Forest (default) - Calm greens and earth tones
   - 🌸 Cherry Blossom Bloom - Vibrant reds and soft pinks
@@ -22,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated conversion service to support multiple output formats (CSV and Excel)
+- Enhanced API to accept `outputFormat` parameter in conversion requests
 - Updated all hardcoded color values to use theme-aware CSS custom properties
 - Refactored background gradients in layout to use dynamic CSS variables
 - Enhanced global CSS with 27 new color families (243 color shades total)
@@ -172,6 +180,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Added
 
 #### Frontend (Next.js 15 + TypeScript)
+
 - **Modern UI Framework**: Next.js 15 with App Router and TypeScript 5
 - **Styling**: Tailwind CSS v4 with custom design system
 - **Dark Mode**: Full dark mode support with system detection and theme toggle
@@ -182,13 +191,16 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - **Responsive Design**: Mobile-first design that works on all devices
 
 #### Backend Microservices
-- **Upload Service (Port 5001)**: 
+
+- **Upload Service (Port 5001)**:
+
   - File upload with validation (PDF, 50MB max)
   - UUID-based file identification
   - Health check endpoint
   - CORS support for frontend integration
 
 - **Conversion Service (Port 5002)**:
+
   - PDF to CSV conversion with pdfplumber
   - Background job processing with threading
   - Real-time progress tracking
@@ -203,6 +215,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
   - Cleanup operations
 
 #### Infrastructure
+
 - **Docker Compose**: Full development environment setup
 - **Shared Libraries**: Common utilities and storage abstraction
 - **Environment Configuration**: Service-specific environment variables
@@ -211,12 +224,14 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Changed
 
 #### Architecture
+
 - **Microservices Pattern**: Separated concerns into independent services
 - **API Communication**: RESTful APIs with CORS support
 - **File Storage**: Shared temporary storage with job-based organization
 - **Progress Tracking**: Polling-based status updates (WebSocket support planned)
 
 #### User Experience
+
 - **Smart Downloads**: Single file downloads as CSV, multiple files as ZIP
 - **Original Filenames**: Preserved in ZIP archives
 - **Real-time Feedback**: Visual progress bars and status indicators
@@ -224,6 +239,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - **Theme Support**: Light, dark, and system theme options
 
 #### Development
+
 - **TypeScript**: Full type safety across frontend
 - **Modern React**: Hooks, async operations, and optimistic updates
 - **API Client**: Centralized API communication layer
@@ -240,6 +256,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 ### Technical Details
 
 #### Frontend Stack
+
 - Next.js 15.5.6 with App Router
 - React 19 with TypeScript 5
 - Tailwind CSS v4
@@ -248,6 +265,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - Lucide React icons
 
 #### Backend Stack
+
 - Flask 3.0.0
 - pdfplumber 0.11.8 for PDF parsing
 - Python 3.11+
@@ -255,6 +273,7 @@ Migrated application from monolithic Flask to modern microservices architecture 
 - Temporary file system storage
 
 #### Deployment
+
 - Frontend: Ready for Vercel deployment
 - Services: Containerized with Docker
 - Local development: npm run dev (starts all services)

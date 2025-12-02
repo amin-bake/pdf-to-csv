@@ -1,6 +1,6 @@
 """
 Conversion Service
-Handles PDF to CSV conversion using pdfplumber and tabula.
+Handles PDF to CSV and Excel conversion using pdfplumber and tabula.
 Port: 5002
 """
 import os
@@ -12,6 +12,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pdfplumber
 import tempfile
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -92,10 +94,72 @@ def save_tables_to_csv(tables, output_dir, base_filename, merge=False):
     return converted_files
 
 
-def process_conversion(job_id, file_infos, parser, merge):
+def save_tables_to_excel(tables, output_dir, base_filename, merge=False):
+    """
+    Save extracted tables to Excel (.xlsx) files.
+    Returns list of created file paths.
+    """
+    converted_files = []
+    
+    if merge:
+        # Merge all tables into a single Excel file with one sheet containing all rows
+        output_path = os.path.join(output_dir, f"{base_filename}.xlsx")
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Merged Data"
+        
+        # Append all rows from all tables sequentially
+        for table in tables:
+            for row in table:
+                ws.append(row)
+        
+        # Auto-adjust column widths
+        for col_idx in range(1, ws.max_column + 1):
+            column_letter = get_column_letter(col_idx)
+            max_length = 0
+            for row_idx in range(1, ws.max_row + 1):
+                cell = ws.cell(row=row_idx, column=col_idx)
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        wb.save(output_path)
+        converted_files.append(output_path)
+    else:
+        # Save each table as a separate Excel file
+        for idx, table in enumerate(tables, start=1):
+            output_path = os.path.join(output_dir, f"{base_filename}_table{idx}.xlsx")
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Table Data"
+            
+            # Append all rows from the table
+            for row in table:
+                ws.append(row)
+            
+            # Auto-adjust column widths
+            for col_idx in range(1, ws.max_column + 1):
+                column_letter = get_column_letter(col_idx)
+                max_length = 0
+                for row_idx in range(1, ws.max_row + 1):
+                    cell = ws.cell(row=row_idx, column=col_idx)
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+                adjusted_width = min(max_length + 2, 50)
+                ws.column_dimensions[column_letter].width = adjusted_width
+            
+            wb.save(output_path)
+            converted_files.append(output_path)
+    
+    return converted_files
+
+
+def process_conversion(job_id, file_infos, parser, merge, output_format='csv'):
     """
     Background worker to process PDF conversion.
     Updates job status as it progresses.
+    Supports output formats: 'csv' or 'excel'
     """
     job = conversion_jobs[job_id]
     job['status'] = 'processing'
@@ -140,14 +204,22 @@ def process_conversion(job_id, file_infos, parser, merge):
             file_output_dir = os.path.join(CONVERTED_FOLDER, job_id, file_id)
             os.makedirs(file_output_dir, exist_ok=True)
             
-            # Save to CSV
+            # Save to output format (CSV or Excel)
             if tables:
-                converted_files = save_tables_to_csv(
-                    tables, 
-                    file_output_dir, 
-                    base_filename, 
-                    merge
-                )
+                if output_format == 'excel':
+                    converted_files = save_tables_to_excel(
+                        tables, 
+                        file_output_dir, 
+                        base_filename, 
+                        merge
+                    )
+                else:
+                    converted_files = save_tables_to_csv(
+                        tables, 
+                        file_output_dir, 
+                        base_filename, 
+                        merge
+                    )
                 
                 for csv_path in converted_files:
                     all_converted.append({
@@ -190,13 +262,14 @@ def health():
 @app.route('/api/convert', methods=['POST'])
 def convert():
     """
-    Start PDF to CSV conversion job.
+    Start PDF to CSV/Excel conversion job.
     
     Request body:
     {
         "fileIds": ["abc123", "def456"],
         "parser": "pdfplumber",  // or "tabula"
-        "merge": false
+        "merge": false,
+        "outputFormat": "csv"  // or "excel"
     }
     """
     data = request.get_json()
@@ -213,6 +286,7 @@ def convert():
     file_ids = data.get('fileIds', [])
     parser = data.get('parser', 'pdfplumber')
     merge = data.get('merge', False)
+    output_format = data.get('outputFormat', 'csv')
     
     if not file_ids:
         return jsonify({
@@ -243,6 +317,7 @@ def convert():
         'fileIds': file_ids,
         'parser': parser,
         'merge': merge,
+        'outputFormat': output_format,
         'createdAt': datetime.utcnow().isoformat(),
         'currentFile': None,
         'convertedFiles': [],
@@ -254,7 +329,7 @@ def convert():
     # Start background conversion
     thread = threading.Thread(
         target=process_conversion,
-        args=(job_id, file_infos, parser, merge),
+        args=(job_id, file_infos, parser, merge, output_format),
         daemon=True
     )
     thread.start()
