@@ -16,6 +16,9 @@ const nextConfig = {
       },
     ];
   },
+  allowedDevOrigins: [
+    "pdf-to-csv.local",
+  ],
 };
 
 module.exports = nextConfig;
