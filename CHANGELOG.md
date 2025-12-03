@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **PDF to JSON Conversion**: New conversion format for structured data export
+  - Extract tables from PDFs to JSON format
+  - Converts table rows to JSON objects with headers as keys
+  - Supports both merged (single file) and separate file outputs
+  - Dedicated `/convert/pdf-to-json` page with full UI
+  - Backend support with proper MIME type handling
 - **PDF to Excel Conversion**: New conversion format supporting Excel (.xlsx) output
   - Extract tables from PDFs to Excel spreadsheets
   - Multi-sheet support when merging tables
@@ -28,8 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated conversion service to support multiple output formats (CSV and Excel)
-- Enhanced API to accept `outputFormat` parameter in conversion requests
+- Updated conversion service to support multiple output formats (CSV, Excel, and JSON)
+- Enhanced API to accept `outputFormat` parameter in conversion requests (csv/excel/json)
+- Enhanced download service to use correct MIME types for all formats
 - Updated all hardcoded color values to use theme-aware CSS custom properties
 - Refactored background gradients in layout to use dynamic CSS variables
 - Enhanced global CSS with 27 new color families (243 color shades total)

@@ -53,7 +53,7 @@ pdf-to-csv/
 - 🏗️ **Microservices Architecture**: Scalable, independently deployable services
 - 📤 **Multiple File Upload**: Drag & drop or select multiple PDF files at once
 - 📊 **Smart Table Extraction**: Automatically detects and extracts tables from PDFs
-- 📑 **Multiple Output Formats**: Convert to CSV or Excel (.xlsx) formats
+- 📑 **Multiple Output Formats**: Convert to CSV, Excel (.xlsx), or JSON formats
 - 🔄 **Automatic Merging**: Combines all tables from each PDF into a single output file
 - 📈 **Real-time Progress**: Visual progress bars with status polling
 - ⬇️ **Flexible Downloads**: Download files individually or all at once as a ZIP
@@ -145,11 +145,11 @@ Then open your browser and navigate to **http://localhost:5000**
 
 ## 📖 Usage
 
-1. **Choose Conversion Type**: Select PDF to CSV or PDF to Excel from the homepage
+1. **Choose Conversion Type**: Select PDF to CSV, PDF to Excel, or PDF to JSON from the homepage
 2. **Upload Files**: Drag & drop PDF files or click to browse
 3. **Select Parser**: Choose between pdfplumber (default) or Tabula
 4. **Choose Output Options**:
-   - Select output format (CSV or Excel)
+   - Select output format (CSV, Excel, or JSON)
    - Optionally merge all tables into a single file
 5. **Convert**: Click "Convert" to start processing
 6. **Monitor Progress**: Watch real-time conversion status
@@ -161,8 +161,20 @@ Then open your browser and navigate to **http://localhost:5000**
   - Great for data analysis and spreadsheet import
   - Lightweight and universally compatible
 - **PDF to Excel**: Extract tables to Excel spreadsheets (.xlsx)
+
   - Multiple tables saved as separate sheets when merged
   - Auto-adjusted column widths for better readability
+  - Native Excel format with formatting support
+
+- **PDF to JSON**: Extract tables to structured JSON format
+  - **Tabular data**: First row used as object keys (headers)
+  - **Non-tabular documents**: Full text extraction for CVs, resumes, reports
+  - Tables preserved with metadata (table number, row/column counts, headers)
+  - Automatic header cleaning (removes newlines, ensures uniqueness)
+  - Empty rows and columns filtered out
+  - Intelligent structure detection distinguishes titles, headers, and data
+  - Perfect for web APIs and data interchange
+  - Human-readable with proper indentation
   - Native Excel format with formatting support
 
 ### Parser Options
