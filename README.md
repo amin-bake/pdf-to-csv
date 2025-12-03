@@ -31,7 +31,13 @@ pdf-to-csv/
 │   └── store/            # Zustand state management
 ├── services/
 │   ├── upload/           # Upload microservice
-│   ├── conversion/       # Conversion microservice
+│   ├── conversion/       # Conversion microservice (Refactored ✨)
+│   │   ├── app.py           # Flask API routes only
+│   │   ├── worker.py        # Background job orchestration
+│   │   ├── extractors.py    # PDF data extraction layer
+│   │   ├── analyzers.py     # Table intelligence & structure analysis
+│   │   ├── converters.py    # Format-specific output generation
+│   │   └── ARCHITECTURE.md  # Detailed architecture documentation
 │   └── download/         # Download microservice
 ├── shared/               # Shared Python libraries
 │   ├── storage.py        # Storage backend abstraction
@@ -47,6 +53,32 @@ pdf-to-csv/
 │   └── DOCKER_KUBERNETES.md
 ├── legacy/              # Original Flask monolith (deprecated)
 └── docker-compose.yml   # Development environment
+
+## 🎯 Recent Updates
+
+### Conversion Service Refactoring (Dec 2025)
+
+The conversion service has been refactored from a monolithic 1180-line file into a clean, modular architecture following industry best practices:
+
+**Key Improvements:**
+- ✅ **Modular Architecture**: Separated into 5 focused modules (128 + 178 + 84 + 272 + 350 lines)
+- ✅ **Separation of Concerns**: Clear layers for extraction, analysis, conversion, orchestration, and API
+- ✅ **Improved Testability**: Each component can be tested independently
+- ✅ **Better Maintainability**: Changes isolated to specific modules
+- ✅ **Enhanced Scalability**: Easy to add new parsers, formats, or swap implementations
+- ✅ **Reduced Coupling**: Clear interfaces between layers with minimal dependencies
+
+**New Module Structure:**
+```
+conversion/
+├── extractors.py    (84 lines)  - Pure PDF data extraction
+├── analyzers.py     (272 lines) - Table intelligence & structure detection
+├── converters.py    (350 lines) - Format-specific output generation
+├── worker.py        (178 lines) - Background job orchestration
+└── app.py           (128 lines) - Flask API routes (reduced from 1180+)
+```
+
+See [services/conversion/ARCHITECTURE.md](services/conversion/ARCHITECTURE.md) for detailed documentation.
 
 ## ✨ Features
 
