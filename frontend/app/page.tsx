@@ -35,7 +35,7 @@ const conversionTypes = [
     description: "Extract structured data from PDFs as JSON",
     icon: FileText,
     href: "/convert/pdf-to-json",
-    available: false,
+    available: true,
   },
   {
     id: "pdf-to-text",

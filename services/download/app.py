@@ -92,6 +92,8 @@ def download_file(file_id):
             mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         elif file_ext == '.csv':
             mimetype = 'text/csv'
+        elif file_ext == '.json':
+            mimetype = 'application/json'
         else:
             mimetype = 'application/octet-stream'
         
