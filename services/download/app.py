@@ -94,6 +94,8 @@ def download_file(file_id):
             mimetype = 'text/csv'
         elif file_ext == '.json':
             mimetype = 'application/json'
+        elif file_ext == '.txt':
+            mimetype = 'text/plain'
         else:
             mimetype = 'application/octet-stream'
         

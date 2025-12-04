@@ -29,8 +29,11 @@ def save_tables_to_text(tables, output_dir, base_filename, merge=False, pdf_path
     # Check if this is valid tabular data or just text
     is_valid_table_data = validate_table_data(tables)
     
-    if not is_valid_table_data and pdf_path:
+    if not is_valid_table_data:
         # Extract as plain text for non-tabular documents
+        if not pdf_path:
+            raise ValueError("PDF path is required for text extraction from non-tabular documents")
+            
         output_path = os.path.join(output_dir, f"{base_filename}.txt")
         
         with pdfplumber.open(pdf_path) as pdf:
