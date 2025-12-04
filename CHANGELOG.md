@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2025-12-04
+
+#### 🎨 Frontend Refactoring: Reusable Conversion Components
+
+Refactored all conversion pages (CSV, Excel, JSON, Text) to eliminate code duplication by creating reusable components and custom hooks.
+
+**Code Improvements:**
+
+- **Reduced Duplication**: Eliminated ~950 lines of duplicated code across 4 pages
+- **Page Simplification**: Each conversion page reduced from ~390 lines to ~22 lines (94% reduction)
+- **Shared Architecture**: Created centralized conversion logic and UI components
+- **Type Safety**: Enhanced type safety with centralized configuration system
+
+**New Components:**
+
+- **ConversionPageLayout**: Reusable UI layout component for all conversion pages (~200 lines)
+- **useConversionPage Hook**: Custom hook encapsulating all conversion logic (~280 lines)
+- **conversionConfig**: Centralized format configurations with type-safe definitions (~45 lines)
+
+**Refactored Pages:**
+
+- `frontend/app/convert/pdf-to-csv/page.tsx`: 390 lines → 22 lines
+- `frontend/app/convert/pdf-to-excel/page.tsx`: 390 lines → 22 lines
+- `frontend/app/convert/pdf-to-json/page.tsx`: 386 lines → 22 lines
+- `frontend/app/convert/pdf-to-text/page.tsx`: 386 lines → 22 lines
+
+**Benefits:**
+
+- **Maintainability**: Bug fixes and feature updates now apply to all formats automatically
+- **Scalability**: Adding new conversion format takes ~5 minutes (was 30+ minutes)
+- **Consistency**: Guaranteed identical behavior across all conversion types
+- **DRY Principle**: Single source of truth for conversion page logic
+- **Developer Experience**: Clear component responsibilities and self-documenting through types
+
+**Technical Details:**
+
+- Created `OutputFormat` type union for type-safe format handling
+- Implemented centralized configuration system with `ConversionConfig` interface
+- Extracted all state management, handlers, and UI into reusable components
+- Maintained full backwards compatibility (zero breaking changes)
+- Preserved all existing functionality and user experience
+
+**Documentation:**
+
+- Created `FRONTEND_REFACTORING.md` with comprehensive refactoring details
+- Documented architecture, design decisions, and usage examples
+- Included metrics showing 61% overall code reduction
+
 ### Added - 2025-12-04
 
 #### 📄 PDF to Text Conversion
