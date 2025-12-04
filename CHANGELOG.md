@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed - 2025-12-03
+
+#### 🏗️ Conversion Service Refactoring: Modular Architecture
+
+Refactored the conversion service from a monolithic 1180-line file into a clean, modular architecture following industry best practices.
+
+**Architecture Improvements:**
+
+- **Modular Design**: Separated into 5 focused modules (128 + 178 + 84 + 272 + 350 lines)
+  - `app.py` (128 lines) - API Layer: Flask routes only
+  - `worker.py` (178 lines) - Orchestration Layer: Background job management
+  - `extractors.py` (84 lines) - Extraction Layer: Pure PDF data extraction
+  - `analyzers.py` (272 lines) - Analysis Layer: Table intelligence & structure detection
+  - `converters.py` (350 lines) - Conversion Layer: Format-specific output generation
+- **Separation of Concerns**: Each layer has a single, clear responsibility
+- **Improved Testability**: Components can be tested independently with mocking
+- **Better Maintainability**: Changes isolated to specific modules (70% smaller files)
+- **Enhanced Scalability**: Easy to add new parsers or formats without touching other code
+- **Reduced Coupling**: Clear interfaces between layers with minimal dependencies
+- **Fault Isolation**: Errors contained within specific modules for easier debugging
+
+**Technical Details:**
+
+- Created layered architecture: API → Orchestration → Extraction/Analysis → Conversion
+- Implemented clear data flow: HTTP Request → Worker → Extractors → Converters → Analyzers
+- Module dependency graph ensures one-way dependencies (no circular references)
+- Zero breaking changes to API endpoints (`/api/convert`, `/api/status/<job_id>`, `/api/health`)
+
+**Bug Fixes:**
+
+- Fixed `datetime.utcnow()` deprecation warnings (replaced with `datetime.now(timezone.utc)`)
+- Fixed TypeError when passing `file_ids` list as `job_id` parameter
+- Fixed Thread object JSON serialization error (now returns `job_id` string)
+- Removed development print statements (`[INFO]` logs)
+
+**Documentation:**
+
+- Added `services/conversion/ARCHITECTURE.md` with comprehensive architecture documentation
+- Updated root `README.md` with refactoring details and new module structure
+- Created detailed PR description with metrics, diagrams, and testing strategy
+
+**Benefits:**
+
+- 14% reduction in total lines with cleaner, more focused code
+- 70% reduction in largest module size (1180 → 350 lines)
+- 400% increase in modularity (1 file → 5 modules)
+- Enabled independent testing of each layer
+- Reduced blast radius for code changes
+- Easier onboarding for new developers
+
+See `services/conversion/ARCHITECTURE.md` for detailed documentation.
+
 ## [Released]
 
 ### Added
