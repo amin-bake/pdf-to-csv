@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2025-12-04
+
+#### 📄 PDF to Text Conversion
+
+Added new PDF to plain text conversion format with intelligent table formatting and full text extraction.
+
+**Features:**
+
+- **Text Format Support**: New `save_tables_to_text()` converter function in `converters.py`
+- **Intelligent Detection**: Automatically detects whether document contains tables or plain text
+- **Table Formatting**: For tabular documents, formats tables with aligned columns for readability
+- **Full Text Extraction**: For text documents (CVs, resumes, reports), extracts complete text with page separators
+- **Merge Support**: Can merge multiple tables/pages into single text file or keep separate
+- **Frontend Page**: New `/convert/pdf-to-text` page with full UI integration
+- **API Support**: Backend updated to handle `outputFormat: "text"` parameter
+
+**Technical Implementation:**
+
+- Added `save_tables_to_text()` function to `converters.py` (uses `validate_table_data()` for detection)
+- Updated `worker._convert_to_format()` to route 'text' format to new converter
+- Added pdfplumber import to `converters.py` for direct text extraction
+- Updated API documentation in `app.py` to include text format
+- Created `frontend/app/convert/pdf-to-text/page.tsx` with complete conversion workflow
+
+**User Benefits:**
+
+- Clean, readable plain text output
+- Preserves document structure and formatting
+- Perfect for text analysis, NLP applications, and content extraction
+- Column-aligned tables for better readability in text format
+
+**Documentation:**
+
+- Updated `README.md` with PDF to Text conversion details
+- Added text format to usage instructions and features list
+- Homepage updated with PDF to Text conversion option (enabled)
+
 ### Changed - 2025-12-03
 
 #### 🏗️ Conversion Service Refactoring: Modular Architecture

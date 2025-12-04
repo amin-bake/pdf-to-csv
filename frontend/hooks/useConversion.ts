@@ -12,7 +12,7 @@ export function useConversion(options?: ConversionOptions) {
       fileIds: string[];
       parser: "pdfplumber" | "tabula";
       merge: boolean;
-      outputFormat?: "csv" | "excel" | "json";
+      outputFormat?: "csv" | "excel" | "json" | "text";
     }) => {
       return api.convert(params);
     },

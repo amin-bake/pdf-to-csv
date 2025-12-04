@@ -85,7 +85,7 @@ See [services/conversion/ARCHITECTURE.md](services/conversion/ARCHITECTURE.md) f
 - 🏗️ **Microservices Architecture**: Scalable, independently deployable services
 - 📤 **Multiple File Upload**: Drag & drop or select multiple PDF files at once
 - 📊 **Smart Table Extraction**: Automatically detects and extracts tables from PDFs
-- 📑 **Multiple Output Formats**: Convert to CSV, Excel (.xlsx), or JSON formats
+- 📑 **Multiple Output Formats**: Convert to CSV, Excel (.xlsx), JSON, or plain text formats
 - 🔄 **Automatic Merging**: Combines all tables from each PDF into a single output file
 - 📈 **Real-time Progress**: Visual progress bars with status polling
 - ⬇️ **Flexible Downloads**: Download files individually or all at once as a ZIP
@@ -177,11 +177,11 @@ Then open your browser and navigate to **http://localhost:5000**
 
 ## 📖 Usage
 
-1. **Choose Conversion Type**: Select PDF to CSV, PDF to Excel, or PDF to JSON from the homepage
+1. **Choose Conversion Type**: Select PDF to CSV, PDF to Excel, PDF to JSON, or PDF to Text from the homepage
 2. **Upload Files**: Drag & drop PDF files or click to browse
 3. **Select Parser**: Choose between pdfplumber (default) or Tabula
 4. **Choose Output Options**:
-   - Select output format (CSV, Excel, or JSON)
+   - Select output format (CSV, Excel, JSON, or Text)
    - Optionally merge all tables into a single file
 5. **Convert**: Click "Convert" to start processing
 6. **Monitor Progress**: Watch real-time conversion status
@@ -199,6 +199,7 @@ Then open your browser and navigate to **http://localhost:5000**
   - Native Excel format with formatting support
 
 - **PDF to JSON**: Extract tables to structured JSON format
+
   - **Tabular data**: First row used as object keys (headers)
   - **Non-tabular documents**: Full text extraction for CVs, resumes, reports
   - Tables preserved with metadata (table number, row/column counts, headers)
@@ -207,7 +208,13 @@ Then open your browser and navigate to **http://localhost:5000**
   - Intelligent structure detection distinguishes titles, headers, and data
   - Perfect for web APIs and data interchange
   - Human-readable with proper indentation
-  - Native Excel format with formatting support
+
+- **PDF to Text**: Extract plain text content from PDFs
+  - **Tabular documents**: Tables formatted with aligned columns
+  - **Text documents**: Full text extraction with page separators
+  - Clean, readable output format
+  - Preserves document structure and formatting
+  - Perfect for text analysis, NLP, and content extraction
 
 ### Parser Options
 

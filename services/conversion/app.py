@@ -42,14 +42,14 @@ def health():
 @app.route('/api/convert', methods=['POST'])
 def convert():
     """
-    Start PDF to CSV/Excel/JSON conversion job.
+    Start PDF to CSV/Excel/JSON/Text conversion job.
     
     Request body:
     {
         "fileIds": ["abc123", "def456"],
         "parser": "pdfplumber",  // or "tabula"
         "merge": false,
-        "outputFormat": "csv"  // or "excel" or "json"
+        "outputFormat": "csv"  // or "excel", "json", "text"
     }
     """
     data = request.get_json()
