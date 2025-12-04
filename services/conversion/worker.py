@@ -7,7 +7,7 @@ import threading
 from datetime import datetime, timezone
 
 from extractors import extract_tables_pdfplumber, extract_text_lines
-from converters import save_tables_to_csv, save_tables_to_excel, save_tables_to_json
+from converters import save_tables_to_csv, save_tables_to_excel, save_tables_to_json, save_tables_to_text
 
 
 class ConversionWorker:
@@ -36,7 +36,7 @@ class ConversionWorker:
             file_infos: List of file information dictionaries
             parser: Parser to use ('pdfplumber' or 'tabula')
             merge: Whether to merge tables into single file
-            output_format: Output format ('csv', 'excel', or 'json')
+            output_format: Output format ('csv', 'excel', 'json', 'text')
         """
         job = self.jobs[job_id]
         job['status'] = 'processing'
@@ -198,15 +198,19 @@ class ConversionWorker:
             output_dir: Output directory path
             base_filename: Base filename for output
             merge: Whether to merge tables
-            output_format: Output format ('csv', 'excel', 'json')
-            pdf_path: Path to original PDF (for JSON text extraction fallback)
+            output_format: Output format ('csv', 'excel', 'json', 'text')
+            pdf_path: Path to original PDF (for JSON/text extraction fallback)
             
         Returns:
             List of converted file paths
         """
-        # For JSON format, always call save function as it handles text extraction fallback
+        # For JSON and text formats, always call save function as they handle text extraction fallback
         if output_format == 'json':
             return save_tables_to_json(
+                tables, output_dir, base_filename, merge, pdf_path
+            )
+        elif output_format == 'text':
+            return save_tables_to_text(
                 tables, output_dir, base_filename, merge, pdf_path
             )
         elif tables:
@@ -220,5 +224,5 @@ class ConversionWorker:
                     tables, output_dir, base_filename, merge
                 )
         else:
-            # No tables and not JSON format - return empty list
+            # No tables and not JSON/text format - return empty list
             return []

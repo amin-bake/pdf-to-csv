@@ -43,7 +43,7 @@ const conversionTypes = [
     description: "Extract all text content from PDF files",
     icon: FileText,
     href: "/convert/pdf-to-text",
-    available: false,
+    available: true,
   },
 ];
 

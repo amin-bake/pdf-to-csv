@@ -81,7 +81,7 @@ export const api = {
     fileIds: string[];
     parser: "pdfplumber" | "tabula";
     merge: boolean;
-    outputFormat?: "csv" | "excel" | "json";
+    outputFormat?: "csv" | "excel" | "json" | "text";
   }): Promise<ConversionResponse> => {
     return apiRequest(`${CONVERSION_SERVICE_URL}/api/convert`, {
       method: "POST",

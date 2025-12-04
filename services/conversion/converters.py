@@ -1,10 +1,11 @@
 """
 File Converters Module
-Handles conversion of extracted table data to various output formats (CSV, Excel, JSON).
+Handles conversion of extracted table data to various output formats (CSV, Excel, JSON, Text).
 """
 import os
 import csv
 import json
+import pdfplumber
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 
@@ -14,6 +15,90 @@ from analyzers import (
     validate_table_data
 )
 from extractors import extract_structured_text_json
+
+
+def save_tables_to_text(tables, output_dir, base_filename, merge=False, pdf_path=None):
+    """
+    Save extracted content to plain text (.txt) files.
+    For documents with tables, extracts table data.
+    For text documents (CVs, resumes), extracts full text content.
+    Returns list of created file paths.
+    """
+    converted_files = []
+    
+    # Check if this is valid tabular data or just text
+    is_valid_table_data = validate_table_data(tables)
+    
+    if not is_valid_table_data and pdf_path:
+        # Extract as plain text for non-tabular documents
+        output_path = os.path.join(output_dir, f"{base_filename}.txt")
+        
+        with pdfplumber.open(pdf_path) as pdf:
+            full_text = []
+            for page_num, page in enumerate(pdf.pages, start=1):
+                text = page.extract_text() or ''
+                if text.strip():
+                    full_text.append(f"=== Page {page_num} ===")
+                    full_text.append(text)
+                    full_text.append("")  # Empty line between pages
+        
+        # Write to file
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(full_text))
+        
+        converted_files.append(output_path)
+    elif tables:
+        # Extract tables as formatted text
+        if merge:
+            # Merge all tables into a single text file
+            output_path = os.path.join(output_dir, f"{base_filename}.txt")
+            with open(output_path, 'w', encoding='utf-8') as f:
+                for table_idx, table in enumerate(tables, start=1):
+                    if len(tables) > 1:
+                        f.write(f"=== Table {table_idx} ===\n\n")
+                    
+                    # Calculate column widths for alignment
+                    if table:
+                        col_widths = [0] * max(len(row) for row in table)
+                        for row in table:
+                            for col_idx, cell in enumerate(row):
+                                col_widths[col_idx] = max(col_widths[col_idx], len(str(cell)))
+                        
+                        # Write rows with aligned columns
+                        for row in table:
+                            row_text = []
+                            for col_idx, cell in enumerate(row):
+                                cell_text = str(cell).ljust(col_widths[col_idx])
+                                row_text.append(cell_text)
+                            f.write('  '.join(row_text) + '\n')
+                        
+                        if table_idx < len(tables):
+                            f.write('\n')  # Separator between tables
+            
+            converted_files.append(output_path)
+        else:
+            # Save each table as a separate text file
+            for idx, table in enumerate(tables, start=1):
+                output_path = os.path.join(output_dir, f"{base_filename}_table{idx}.txt")
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    if table:
+                        # Calculate column widths for alignment
+                        col_widths = [0] * max(len(row) for row in table)
+                        for row in table:
+                            for col_idx, cell in enumerate(row):
+                                col_widths[col_idx] = max(col_widths[col_idx], len(str(cell)))
+                        
+                        # Write rows with aligned columns
+                        for row in table:
+                            row_text = []
+                            for col_idx, cell in enumerate(row):
+                                cell_text = str(cell).ljust(col_widths[col_idx])
+                                row_text.append(cell_text)
+                            f.write('  '.join(row_text) + '\n')
+                
+                converted_files.append(output_path)
+    
+    return converted_files
 
 
 def save_tables_to_csv(tables, output_dir, base_filename, merge=False):
