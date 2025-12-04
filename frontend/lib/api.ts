@@ -100,7 +100,17 @@ export const api = {
     );
 
     if (!response.ok) {
-      throw new Error(`Download failed: ${response.status}`);
+      // Try to get error details from response
+      let errorMessage = `Download failed: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error?.message) {
+          errorMessage = `Download failed: ${errorData.error.message}`;
+        }
+      } catch {
+        // If parsing fails, use the status code
+      }
+      throw new Error(errorMessage);
     }
 
     const blob = await response.blob();

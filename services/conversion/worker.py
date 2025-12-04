@@ -185,6 +185,10 @@ class ConversionWorker:
             # Future: Add tabula support
             # For now, fall back to pdfplumber
             tables = extract_tables_pdfplumber(pdf_path)
+            
+            # Fallback to text if no tables found
+            if not tables:
+                tables = extract_text_lines(pdf_path)
         
         return tables
     
